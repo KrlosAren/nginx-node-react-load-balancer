@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  node:
+    build:
+      context: .
+      dockerfile: ./compose/node/Dockerfile
+    image: backend_node
+    container_name: backend_node
+    ports:
+      - '4500:4500'
+    volumes:
+      - ./node:/usr/src/app
+    env_file:
+      - ./.envs/.node/.env
+    restart: on-failure
+
+  nginx:
+    build:
+      context: .
+      dockerfile: ./compose/nginx/Dockerfile
+    image: reverse_proxy
+    container_name: reverse_proxy
+    ports:
+      - '80:80'
+      - '3001:3001'
+    restart: on-failure
+
+  client:
+    build:
+      context: .
+      dockerfile: ./compose/client/Dockerfile
+    image: client
+    container_name: client
+    volumes:
+      - ./client:/usr/src/app
+    env_file:
+      - ./.envs/.client/.env
+    restart: on-failure
